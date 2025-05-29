@@ -1,0 +1,101 @@
+<head>
+    <link href="static/index.min.css" rel="stylesheet"/>
+    <script src="static/vue.global.min.js"></script>
+    <script src="static/index.full.min.js"></script>
+    <link rel="stylesheet" href="app.css"/>
+    <link rel="stylesheet" href="static/animated-emoji.css"/>
+</head>
+
+<body>
+<div class="el-dialog__wrapper x-dialog x-avatar-dialog" style="z-index: 2143;">
+    <div role="dialog" aria-modal="true" aria-label="dialog" class="el-dialog"
+         style="margin-top: 4vh; width: 600px;">
+        <div class="el-dialog__body">
+            <div class="">
+                <div style="display: flex;"><span><span class="el-popover__reference-wrapper"><img
+                        class="el-popover__reference" aria-describedby="el-popover-5669" tabindex="0"
+                        style="flex: 0 0 auto; width: 160px; height: 120px; border-radius: 12px;"
+                        src="{{ thumbnailImageUrl }}"></span>
+                        </span>
+                    <div style="flex: 1 1 0%; display: flex; align-items: center; margin-left: 15px;">
+                        <div style="flex: 1 1 0%;">
+                            <div><span class="dialog-title">{{ name }}</span></div>
+                            <div style="margin-top: 5px;"><span class="x-grey"
+                                                                style="font-family: monospace;">{{ authorName }}</span>
+                            </div>
+                            <div><span class="el-tag el-tag--success el-tag--mini el-tag--plain"
+                                       style="margin-right: 5px; margin-top: 5px;">公开</span>
+                                {% if avatar_pc %}
+                                    <span class="x-tag-platform-pc el-tag el-tag--info el-tag--mini el-tag--plain"
+                                          style="margin-right: 5px; margin-top: 5px;">PC
+                                            <span class="x-grey"
+                                                  style="margin-left: 5px; border-left: inherit; padding-left: 5px;">{{ avatar_pc }}</span>
+                                        </span>
+                                {% endif %}
+                                {% if avatar_android %}
+                                    <span
+                                            class="x-tag-platform-quest el-tag el-tag--info el-tag--mini el-tag--plain"
+                                            style="margin-right: 5px; margin-top: 5px;">Android
+                                            <span class="x-grey"
+                                                  style="margin-left: 5px; border-left: inherit; padding-left: 5px;">{{ avatar_android }}</span>
+                                        </span>
+                                {% endif %}
+                                {% if avatar_ios %}
+                                    <span class="x-tag-platform-ios el-tag el-tag--info el-tag--mini el-tag--plain"
+                                          style="margin-right: 5px; margin-top: 5px;">iOS
+                                            <span class="x-grey"
+                                                  style="margin-left: 5px; border-left: inherit; padding-left: 5px;">{{ avatar_ios }}</span>
+                                        </span>
+                                {% endif %}
+                                {% if avatar_impostor %}
+                                    <span class="el-tag el-tag--info el-tag--mini el-tag--plain"
+                                          style="margin-right: 5px; margin-top: 5px;">模型替身
+                                            <span class="x-grey"
+                                                  style="margin-left: 5px; border-left: inherit; padding-left: 5px;">v{{ avatar_impostor }}</span></span>
+                                {% endif %}
+                                <div></div>
+                            </div>
+                            <div style="margin-top: 5px;"><span
+                                    style="font-size: 12px;">{{ description }}</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="el-tabs el-tabs--top">
+                    <br>
+                    <div class="el-tabs__content">
+                        <div role="tabpanel" id="pane-0" aria-labelledby="tab-0" class="el-tab-pane" style="">
+                            <div class="x-friend-list">
+                                <div class="x-friend-item" style="width: 100%; cursor: default;">
+                                    <div class="detail"><span class="name">模型 ID</span> <span
+                                            class="extra">{{ id }}
+                                        <div
+                                                class="el-tooltip el-dropdown" aria-describedby="el-tooltip-2186"
+                                                tabindex="0" style="margin-left: 5px;">
+                                                </div></span></div>
+                                </div>
+                                <div class="x-friend-item" style="cursor: default;">
+                                    <div class="detail"><span class="name">创建时间</span> <span
+                                            class="extra">{{ created_at }}</span></div>
+                                </div>
+                                <div class="x-friend-item" style="cursor: default;">
+                                    <div class="detail"><span class="name">最后更新</span> <span
+                                            class="extra">{{ updated_at }}</span></div>
+                                </div>
+                                <div class="x-friend-item" style="cursor: default;">
+                                    <div class="detail"><span class="name">版本</span> <span
+                                            class="extra">{{ version }}</span>
+                                    </div>
+                                </div>
+                                <div class="x-friend-item" style="width: 100%; cursor: default;">
+                                    <div class="detail"><span class="name">支持的平台</span> <span
+                                            class="extra">{{ avatar_platforms }}</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>

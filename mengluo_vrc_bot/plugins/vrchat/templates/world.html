@@ -1,0 +1,194 @@
+<head>
+    <link href="static/index.min.css" rel="stylesheet"/>
+    <script src="static/vue.global.min.js"></script>
+    <script src="static/index.full.min.js"></script>
+    <link rel="stylesheet" href="app.css"/>
+    <link rel="stylesheet" href="static/animated-emoji.css"/>
+</head>
+
+<body>
+<div class="el-dialog__wrapper x-dialog x-world-dialog" style="z-index: 2070;">
+    <div role="dialog" aria-modal="true" aria-label="dialog" class="el-dialog"
+         style="margin-top: 4vh; width: 770px;">
+        <div class="el-dialog__header">
+            <span class="el-dialog__title"></span>
+        </div>
+        <div class="el-dialog__body">
+            <div class="">
+                <div style="display: flex;">
+                        <span>
+                            <span class="el-popover__reference-wrapper">
+                                <img class="el-popover__reference" aria-describedby="el-popover-3579" tabindex="0"
+                                     style="flex: 0 0 auto; width: 160px; height: 120px; border-radius: 12px;"
+                                     src="{{ thumbnailImageUrl }}"></span>
+                        </span>
+                    <div style="flex: 1 1 0%; display: flex; align-items: center; margin-left: 15px;">
+                        <div style="flex: 1 1 0%;">
+                            <div><i class="el-icon-s-home" style="margin-right: 5px; display: none;"></i> <span
+                                    class="dialog-title">{{ name }}</span></div>
+                            <div style="margin-top: 5px;"><span class="x-grey"
+                                                                style="font-family: monospace;">{{ authorName }}</span>
+                            </div>
+                            <div>
+                                {% if releaseStatus =="public" %}
+                                    <span class="el-tag el-tag--success el-tag--mini el-tag--plain"
+                                          style="margin-right: 5px; margin-top: 5px;">公开</span>
+                                {% elif releaseStatus =="lab" %}
+                                    <span class="el-tag el-tag--primary el-tag--mini el-tag--plain"
+                                          style="margin-right: 5px; margin-top: 5px;">社区实验室</span>
+                                {% else %}
+                                    <span class="el-tag el-tag--danger el-tag--mini el-tag--plain"
+                                          style="margin-right: 5px; margin-top: 5px;">私人</span>
+                                {% endif %}
+                                {% if world_pc %}
+                                    <span class="x-tag-platform-pc el-tag el-tag--info el-tag--mini el-tag--plain"
+                                          style="margin-right: 5px; margin-top: 5px;">PC
+                                        <span class="x-grey"
+                                              style="margin-left: 5px; border-left: inherit; padding-left: 5px;">{{ world_pc }} MB</span>
+                                    </span>
+                                {% endif %}
+                                {% if world_android %}
+                                    <span class="x-tag-platform-quest el-tag el-tag--info el-tag--mini el-tag--plain"
+                                          style="margin-right: 5px; margin-top: 5px;">Android
+                                        <span class="x-grey"
+                                              style="margin-left: 5px; border-left: inherit; padding-left: 5px;">{{ world_android }} MB</span>
+                                    </span>
+                                {% endif %}
+                                {% if world_ios %}
+                                    <span class="x-tag-platform-ios el-tag el-tag--info el-tag--mini el-tag--plain"
+                                          style="margin-right: 5px; margin-top: 5px;">iOS</span>
+                                    <span class="x-grey"
+                                          style="margin-left: 5px; border-left: inherit; padding-left: 5px;">{{ world_ios }} MB</span>
+                                {% endif %}
+                            </div>
+                            <div>
+                                {% for contentTag in contentTags %}
+                                    <span class="el-tag el-tag--mini el-tag--plain"
+                                          style="margin-right: 5px; margin-top: 5px;">{{ contentTag }}</span>
+                                {% endfor %}
+                            </div>
+                            <div style="margin-top: 5px;"><span style="font-size: 12px;">{{ description }}</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="el-tabs el-tabs--top">
+                    <div class="el-tabs__content">
+                        <br>
+                        <div role="tabpanel" id="pane-1" aria-labelledby="tab-1" class="el-tab-pane">
+                            <div class="x-friend-list" style="max-height: none;">
+                                <div style="width: 100%; display: flex;">
+                                    <div class="x-friend-item" style="width: 100%; cursor: default;">
+                                        <div class="detail"><span class="name">
+                                                    世界 ID
+                                                </span> <span class="extra" style="display: inline;">
+                                                    {{ id }}
+                                                </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="x-friend-item" style="width: 100%; cursor: default;">
+                                    <div class="detail"><span class="name">
+                                                作者添加的标签
+                                            </span> <span class="extra">
+                                                {{ authorTags }}
+                                            </span></div>
+                                </div>
+                                <div class="x-friend-item" style="cursor: default;">
+                                    <div class="detail"><span class="name">
+                                                地图内总在线人数
+                                            </span> <span class="extra">
+                                                {{ occupants }}
+                                            </span></div>
+                                </div>
+                                <div class="x-friend-item" style="cursor: default;">
+                                    <div class="detail"><span class="name">
+                                                收藏人数
+                                            </span> <span class="extra">
+                                                {{ favorites }}<span class="extra">
+                                                    ({{ ratio_favorite }}%)
+                                                </span></span></div>
+                                </div>
+                                <div class="x-friend-item" style="cursor: default;">
+                                    <div class="detail"><span class="name">
+                                                总游玩人次
+                                            </span> <span class="extra">
+                                                {{ visits }}
+                                            </span></div>
+                                </div>
+                                <div class="x-friend-item" style="cursor: default;">
+                                    <div class="detail"><span class="name">
+                                                推荐人数
+                                            </span> <span class="extra">
+                                                {{ recommendedCapacity }} ({{ capacity }})
+                                            </span></div>
+                                </div>
+                                <div class="x-friend-item" style="cursor: default;">
+                                    <div class="detail"><span class="name">
+                                                创建时间
+                                            </span> <span class="extra">
+                                                {{ created_at }}
+                                            </span></div>
+                                </div>
+                                <div class="x-friend-item" style="cursor: default;">
+                                    <div class="detail"><span class="name">
+                                                最后更新
+                                            </span> <span class="extra">
+                                                {{ updated_at }}
+                                            </span></div>
+                                </div>
+                                <div class="x-friend-item" style="cursor: default;">
+                                    <div class="detail"><span class="name">
+                                                进入实验室的日期
+                                            </span> <span class="extra">
+                                                {{ labsPublicationDate }}
+                                            </span></div>
+                                </div>
+                                <div class="x-friend-item" style="cursor: default;">
+                                    <div class="detail"><span class="name" style="display: inline;">
+                                                正式公开于
+                                            </span><span class="extra">
+                                                {{ publicationDate }}
+                                            </span></div>
+                                </div>
+                                <div class="x-friend-item" style="cursor: default;">
+                                    <div class="detail"><span class="name">
+                                                版本
+                                            </span> <span class="extra">{{ version }}</span></div>
+                                </div>
+                                <div class="x-friend-item" style="cursor: default;">
+                                    <div class="detail"><span class="name">
+                                                热度
+                                            </span> <span class="extra">
+                                                {{ heat }}
+                                            </span></div>
+                                </div>
+                                <div class="x-friend-item" style="cursor: default;">
+                                    <div class="detail"><span class="name">
+                                                知名度
+                                            </span> <span class="extra">
+                                                {{ popularity }}
+                                            </span></div>
+                                </div>
+                                <div class="x-friend-item" style="width: 100%; cursor: default;">
+                                    <div class="detail"><span class="name">
+                                                支持的平台
+                                            </span> <span class="extra"
+                                                          style="white-space: normal;">{{ world_platforms }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="el-loading-mask" style="display: none;">
+                    <div class="el-loading-spinner">
+                        <svg viewBox="25 25 50 50" class="circular">
+                            <circle cx="50" cy="50" r="20" fill="none" class="path"></circle>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>

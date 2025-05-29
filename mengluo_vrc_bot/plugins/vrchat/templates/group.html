@@ -1,0 +1,132 @@
+<head>
+    <link href="static/index.min.css" rel="stylesheet"/>
+    <script src="static/vue.global.min.js"></script>
+    <script src="static/index.full.min.js"></script>
+    <link rel="stylesheet" href="app.css"/>
+    <link rel="stylesheet" href="static/animated-emoji.css"/>
+</head>
+
+<body>
+<div class="el-dialog__wrapper x-dialog x-group-dialog" style="z-index: 2112;">
+    <div role="dialog" aria-modal="true" aria-label="dialog" class="el-dialog"
+         style="margin-top: 4vh; width: 770px;">
+        <div class="el-dialog__body">
+            <div class="group-body">
+                <div style="display: flex;"><span>
+                            <span class="el-popover__reference-wrapper"><img class="el-popover__reference"
+                                                                             aria-describedby="el-popover-3111"
+                                                                             tabindex="0"
+                                                                             src="{{ iconUrl }}"
+                                                                             style="flex: 0 0 auto; width: 120px; height: 120px; border-radius: 12px;"></span>
+                        </span>
+                    <div style="flex: 1 1 0%; display: flex; align-items: center; margin-left: 15px;">
+                        <div class="group-header" style="flex: 1 1 0%;"> <span class="dialog-title"
+                                                                               style="margin-right: 5px;">{{ name }}</span>
+                            <span
+                                    class="group-discriminator x-grey"
+                                    style="font-family: monospace; font-size: 12px; margin-right: 5px;">
+                                    {{ groupCode }}
+                                </span> <span class="el-tooltip flags jp" aria-describedby="el-tooltip-3319"
+                                              tabindex="0"
+                                              style="display: inline-block; margin-right: 5px;"></span><span
+                                    class="el-tooltip flags us" aria-describedby="el-tooltip-7466" tabindex="0"
+                                    style="display: inline-block; margin-right: 5px;"></span>
+                            <div style="margin-top: 5px;"><span class="x-grey"
+                                                                style="font-family: monospace;">{{ owner }}</span></div>
+                            <div class="group-tags">
+                                <span class="el-tag el-tag--success el-tag--mini el-tag--plain"
+                                      style="margin-right: 5px; margin-top: 5px;">公开</span>
+                                {% if joinState == "open" %}
+                                    <span class="el-tag el-tag--success el-tag--mini el-tag--plain"
+                                          style="margin-right: 5px; margin-top: 5px;">开放</span>
+                                {% elif joinState == "request" %}
+                                    <span class="el-tag el-tag--warning el-tag--mini el-tag--plain"
+                                          style="margin-right: 5px; margin-top: 5px;">需要申请加入</span>
+                                {% elif joinState == "invite" %}
+                                    <span class="el-tag el-tag--danger el-tag--mini el-tag--plain"
+                                          style="margin-right: 5px; margin-top: 5px;">仅允许邀请加入</span>
+                                {% elif joinState == "closed" %}
+                                    <span class="el-tag el-tag--danger el-tag--mini el-tag--plain"
+                                          style="margin-right: 5px; margin-top: 5px;">不允许任何人加入</span>
+                                {% endif %}
+                            </div>
+                            <div class="group-description" style="margin-top: 5px;"><span
+                                    style="font-size: 12px;">{{ description }}</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="el-tabs el-tabs--top">
+                    <br>
+                    <div class="el-tabs__content">
+                        <div role="tabpanel" id="pane-0" aria-labelledby="tab-0" class="el-tab-pane" style="">
+                            <div class="group-banner-image-info"><span>
+                                        <span class="el-popover__reference-wrapper"><img class="el-popover__reference"
+                                                                                         aria-describedby="el-popover-556"
+                                                                                         tabindex="0"
+                                                                                         src="{{ bannerUrl }}"
+                                                                                         style="flex: 0 0 auto; width: 100%; aspect-ratio: 6 / 1; object-fit: cover; border-radius: 4px;"></span>
+                                    </span></div>
+                            <br>
+                            <div class="x-friend-list" style="max-height: none;">
+                                <div class="x-friend-item" style="width: 100%; cursor: default;">
+                                    <div class="detail"><span class="name">公告</span> <span
+                                            style="display: block;"></span>
+                                        <pre class="extra"
+                                             style="display: inline-block; vertical-align: top; font-family: inherit; font-size: 12px; white-space: pre-wrap; margin: 0px;">-</pre>
+                                        <br>
+                                    </div>
+                                </div>
+                                <div class="x-friend-item" style="width: 100%; cursor: default;">
+                                    <div class="detail"><span class="name">规则</span>
+                                        <pre class="extra"
+                                             style="font-family: inherit; font-size: 12px; white-space: pre-wrap; margin: 0px 0.5em 0px 0px;">{{ rules }}</pre>
+                                    </div>
+                                </div>
+                                <div class="x-friend-item" style="cursor: default;">
+                                    <div class="detail"><span class="name">成员</span>
+                                        <div class="extra">
+                                            {{ memberCount }} ({{ onlineMemberCount }})
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="x-friend-item" style="cursor: default;">
+                                    <div class="detail"><span class="name">创建时间</span> <span
+                                            class="extra">{{ createdAt }}</span></div>
+                                </div>
+                                <div class="x-friend-item" style="cursor: default;">
+                                    <div class="detail"><span class="name">链接</span>
+                                        {% if links %}
+                                            {% for link in links %}
+                                                <img src="{{ link }}" class="el-tooltip"
+                                                     style="width: 16px; height: 16px; vertical-align: middle; margin-right: 5px; cursor: pointer;"
+                                                     aria-describedby="el-tooltip-5637" tabindex="0">
+                                            {% endfor %}
+                                        {% else %}
+                                            <div class="extra">-</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="x-friend-item" style="width: 350px; cursor: default;">
+                                    <div class="detail"><span class="name">群组链接</span> <span
+                                            class="extra">https://vrc.group/{{ groupCode }}</span></div>
+                                </div>
+                                <div class="x-friend-item" style="width: 350px; cursor: default;">
+                                    <div class="detail"><span class="name">群组 ID</span> <span
+                                            class="extra">{{ id }}</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="el-loading-mask" style="display: none;">
+                    <div class="el-loading-spinner">
+                        <svg viewBox="25 25 50 50" class="circular">
+                            <circle cx="50" cy="50" r="20" fill="none" class="path"></circle>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>

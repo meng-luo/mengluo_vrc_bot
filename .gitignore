@@ -1,0 +1,27 @@
+# 操作系统生成文件
+.DS_Store
+Thumbs.db
+
+# 同步文件
+.stfolder/
+
+# 日志文件
+*.log
+
+# 缓存文件
+.cache
+__pycache__/
+
+# 虚拟环境
+.venv/
+
+.env.dev
+
+# 打包文件
+dist/
+build/
+*.egg-info/``
+
+# IDE 配置文件
+.idea/
+.vscode/

@@ -4,6 +4,7 @@ Thumbs.db
 
 # 同步文件
 .stfolder/
+.stignore
 
 # 日志文件
 *.log

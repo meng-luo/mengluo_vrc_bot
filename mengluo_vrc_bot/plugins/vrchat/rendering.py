@@ -64,6 +64,7 @@ class GroupData:
     group_image: str = ""
     group_discriminator: str = ""
     group_name: str = ""
+    group_is_owned: bool = False
 
 
 @dataclass
@@ -142,7 +143,7 @@ async def process_avatar_info(avatar_image_url: str, user_id: str) -> AvatarInfo
     return avatar_info
 
 
-def process_user_groups(groups_info: List[Dict]) -> Tuple[int, bool, GroupData]:
+def process_user_groups(groups_info: List[Dict], user_id: str) -> Tuple[int, bool, GroupData]:
     """处理用户组信息"""
     groups_count = len(groups_info)
     representing_group = next((group for group in groups_info if group['isRepresenting']), None)
@@ -151,6 +152,7 @@ def process_user_groups(groups_info: List[Dict]) -> Tuple[int, bool, GroupData]:
     group_data = GroupData()
     if representing_group:
         group_data.group_image = f"https://api.vrchat.cloud/api/1/image/{representing_group['iconId']}/1/128"
+        group_data.group_is_owned = True if representing_group['ownerId'] == user_id else False
         group_data.group_discriminator = representing_group.get('discriminator', "")
         group_data.group_name = representing_group.get('name', "")
 
@@ -233,7 +235,7 @@ async def render_userinfo(user_id: str) -> Union[bytes, str]:
 
         # 处理用户组信息
         groups_info = await get_user_groups(user_id)
-        groups_count, group_status, group_data = process_user_groups(groups_info)
+        groups_count, group_status, group_data = process_user_groups(groups_info, user_id)
 
         # 处理信任等级
         known, know_description = get_trust_level(user_info['tags'])
@@ -268,6 +270,7 @@ async def render_userinfo(user_id: str) -> Union[bytes, str]:
             "group_image": group_data.group_image,
             "group_discriminator": group_data.group_discriminator,
             "group_name": group_data.group_name,
+            "group_is_owned": group_data.group_is_owned,
             "badges": user_info['badges'],
             "min_height": min_height,
         }

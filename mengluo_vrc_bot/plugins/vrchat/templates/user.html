@@ -129,6 +129,9 @@
                             </span> </span>
                                                 </div>
                                                 <span style="vertical-align: top;">
+                          {% if group_is_owned %}
+                          <span style="margin-right: 5px;">👑</span>
+                          {% endif %}
                           <span style="margin-right: 5px;">{{ group_name }}</span>
                           <span>({{ group_discriminator }})</span> </span>
                                             </div>

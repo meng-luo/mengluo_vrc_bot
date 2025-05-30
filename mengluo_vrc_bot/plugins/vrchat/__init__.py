@@ -1,10 +1,13 @@
-from nonebot_plugin_alconna import Alconna, Args, on_alconna, UniMessage
+from nonebot_plugin_alconna import Alconna, Args, on_alconna, At, UniMessage, Match
+from nonebot_plugin_uninfo import Uninfo
+from ...services.db import fetchone
 
 from .rendering import *
 
 get_avatar = on_alconna(Alconna("查看模型", Args["id", str]))
 get_world = on_alconna(Alconna("查看世界", Args["id", str]))
-get_user = on_alconna(Alconna("查看用户", Args["id", str]))
+get_user = on_alconna(Alconna("查看用户", Args["id?", str, None]["at_user?", At]))
+my_info= on_alconna(Alconna("我的信息"))
 get_group = on_alconna(Alconna("查看群组", Args["id", str]))
 search_group = on_alconna(Alconna("搜索群组", Args["name", str]))
 search_user = on_alconna(Alconna("搜索用户", Args["name", str]))
@@ -15,7 +18,7 @@ search_world = on_alconna(Alconna("搜索世界", Args["name", str]))
 async def _(id: str):
     # 验证模型ID格式（avtr_前缀+UUID）
     if not re.match(r'^avtr_[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$', id):
-        await get_avatar.finish("错误：模型ID格式不正确，示例：avtr_d519f3d1-122c-423c-a355-ca453a6513e2")
+        await get_avatar.finish("错误：模型ID格式不正确")
     img = await render_avatarinfo(id)
     if type(img) == str:
         await get_avatar.finish(img)
@@ -26,7 +29,7 @@ async def _(id: str):
 async def _(id: str):
     # 验证世界ID格式（wrld_前缀+UUID）
     if not re.match(r'^wrld_[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$', id):
-        await get_world.finish("错误：世界ID格式不正确，示例：wrld_c16e4dee-d149-4116-adbc-16bc30b664b0")
+        await get_world.finish("错误：世界ID格式不正确")
     img = await render_worldinfo(id)
     if type(img) == str:
         await get_world.finish(img)
@@ -34,21 +37,39 @@ async def _(id: str):
 
 
 @get_user.handle()
-async def _(id: str):
-    # 验证用户ID格式（usr_前缀+UUID）
-    if not re.match(r'^usr_[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$', id):
-        await get_user.finish("错误：用户ID格式不正确，示例：usr_cec4a881-191f-4834-b440-e66ecc937a57")
+async def _(id: str| None, session: Uninfo, at_user: Match[At]):
+    if at_user.available and session.group:
+        user_id = at_user.result.target
+        result = await fetchone("SELECT vrc_id FROM user_info WHERE user_id =?", user_id)
+        if not result:
+            await get_avatar.finish("错误：该用户未绑定vrc_id！")
+        else:
+            id = result[0]
+    elif not re.match(r'^usr_[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$', id):
+        await get_user.finish("错误：用户ID格式不正确")
     img = await render_userinfo(id)
     if type(img) == str:
         await get_user.finish(img)
     await UniMessage.image(raw=img).send()
 
+@my_info.handle()
+async def _(session: Uninfo):
+    user_id = session.user.id
+    result = await fetchone("SELECT vrc_id FROM user_info WHERE user_id =?", user_id)
+    if not result:
+        await my_info.finish("错误：您未绑定vrc_id！")
+    else:
+        id = result[0]
+        img = await render_userinfo(id)
+        if type(img) == str:
+            await my_info.finish(img)
+        await UniMessage.image(raw=img).send()
 
 @get_group.handle()
 async def _(id: str):
     # 验证群组ID格式（grp_前缀+UUID）
     if not re.match(r'^grp_[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$', id):
-        await get_group.finish("错误：群组ID格式不正确，示例：grp_ef4bf571-8b5e-4068-b503-49a9a52829cf")
+        await get_group.finish("错误：群组ID格式不正确")
     img = await render_groupinfo(id)
     if type(img) == str:
         await get_group.finish(img)

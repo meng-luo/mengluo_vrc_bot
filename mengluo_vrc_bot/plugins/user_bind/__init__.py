@@ -3,7 +3,7 @@ from nonebot_plugin_alconna import Alconna, Args, on_alconna
 from nonebot_plugin_uninfo import Uninfo
 
 # 显式导入需要的数据库函数，避免*导入带来的命名冲突
-from ...services.db import execute, fetchone
+from mengluo_vrc_bot.services.db import execute, fetchone
 
 # 提取正则表达式为常量，提高可读性
 VRC_ID_PATTERN = r'^usr_[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'

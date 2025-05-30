@@ -1,6 +1,7 @@
 import sqlite3
+
 from pathlib import Path
-from nonebot import logger
+from .log import logger
 
 DATABASE_PATH = Path(__file__).parent.parent.parent / "data/database.db"
 
@@ -16,7 +17,6 @@ def init_db():
                       vrc_cookie TEXT)''')
         c.close()  # 显式关闭游标（可选，连接关闭时会自动关闭游标）
         conn.commit()
-    logger.info("数据库表初始化完成")
 
 async def get_db():
     """获取数据库连接（保持异步接口）"""

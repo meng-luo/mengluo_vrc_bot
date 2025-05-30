@@ -1,6 +1,7 @@
 import nonebot
 import requests
-from nonebot.log import logger
+
+from mengluo_vrc_bot.services.log import logger
 
 config = nonebot.get_driver().config
 cookie = config.vrc_auth

@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta
 from typing import Any, overload
-from pathlib import Path
 
 import nonebot
 from nonebot import require

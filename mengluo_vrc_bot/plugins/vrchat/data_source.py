@@ -1,10 +1,8 @@
-import nonebot
 import requests
 
+from mengluo_vrc_bot.services.account_refresh import get_cookie, update_cookie
 from mengluo_vrc_bot.services.log import logger
 
-config = nonebot.get_driver().config
-cookie = config.vrc_auth
 
 BASE_API_URL = "https://api.vrchat.cloud/api/1/"  # 提取基础API URL常量
 USER_AGENT = "mengluo_vrc_bot/1.0"
@@ -12,11 +10,15 @@ USER_AGENT = "mengluo_vrc_bot/1.0"
 
 async def request(url, method="GET", **kwargs) -> dict | None:
     headers = {
-        "Cookie": cookie,
+        "Cookie": await get_cookie(),  # 使用从文件中读取的Cookie
         "User-Agent": USER_AGENT  # 使用自定义User-Agent
     }
     try:
         response = requests.request(method, url, **kwargs, headers=headers)
+        if response.status_code == 401:  # 检查是否需要更新Cookie
+            cookie = "auth=" + await update_cookie()  # 更新Cookie
+            headers["Cookie"] = cookie  # 更新请求头中的Cookie
+            response = requests.request(method, url, **kwargs, headers=headers)  # 重新发送请求        response.raise_for_status()
         response.raise_for_status()
         return response.json()
     except requests.exceptions.RequestException as e:

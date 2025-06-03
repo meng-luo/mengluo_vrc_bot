@@ -1,6 +1,6 @@
 from nonebot_plugin_alconna import Alconna, Args, on_alconna, At, UniMessage, Match
 from nonebot_plugin_uninfo import Uninfo
-from ...services.db import fetchone
+from mengluo_vrc_bot.services.db import fetchone
 
 from .rendering import *
 

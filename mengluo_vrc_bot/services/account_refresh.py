@@ -1,8 +1,8 @@
 import json
 from typing import Dict, Optional
 
-import aiohttp
 import nonebot
+from mengluo_vrc_bot.utils.http_utils import AsyncHttpx
 from mengluo_vrc_bot.services.log import logger
 from mengluo_vrc_bot.config.path import DATA_PATH
 
@@ -18,28 +18,6 @@ COOKIE_FILE = DATA_PATH / "cookie.json"
 class VRCAuthError(Exception):
     """VRChat认证相关异常"""
     pass
-
-
-async def _make_request(
-    method: str, 
-    url: str, 
-    headers: Dict[str, str], 
-    json_data: Optional[Dict] = None
-) -> Optional[aiohttp.ClientResponse]:
-    """统一的HTTP请求方法"""
-    try:
-        async with aiohttp.ClientSession() as session:
-            async with session.request(
-                method=method,
-                url=url,
-                headers=headers,
-                json=json_data,
-                timeout=aiohttp.ClientTimeout(total=30)
-            ) as response:
-                return response
-    except aiohttp.ClientError as e:
-        logger.error(f"请求失败: {e}")
-        return None
 
 
 def _parse_cookies(set_cookie_header: str) -> Dict[str, str]:
@@ -67,11 +45,9 @@ async def refresh_token() -> Optional[Dict[str, str]]:
         "User-Agent": USER_AGENT
     }
     
-    response = await _make_request("GET", url, headers)
-    if not response:
-        return None
-    
     try:
+        response = await AsyncHttpx.get(url, headers=headers)
+        
         set_cookie_header = response.headers.get('Set-Cookie')
         if not set_cookie_header:
             logger.error("响应中未找到Set-Cookie头部")
@@ -90,7 +66,7 @@ async def refresh_token() -> Optional[Dict[str, str]]:
             return None
             
     except Exception as e:
-        logger.error(f"处理响应时出错: {e}")
+        logger.error(f"刷新令牌失败: {e}")
         return None
 
 
@@ -144,20 +120,25 @@ async def test_cookie(cookie: str) -> bool:
     """测试cookie是否有效"""
     url = f"{VRC_API_BASE}/auth/user"
     headers = {
-        "Cookie": cookie,
         "User-Agent": USER_AGENT
     }
     
-    response = await _make_request("GET", url, headers)
-    if not response:
-        return False
-    
     try:
-        if response.status == 401:
+        # 解析cookie字符串为字典格式
+        cookie_dict = {}
+        if cookie:
+            for item in cookie.split(';'):
+                if '=' in item:
+                    key, value = item.strip().split('=', 1)
+                    cookie_dict[key] = value
+        
+        response = await AsyncHttpx.get(url, headers=headers, cookies=cookie_dict)
+        
+        if response.status_code == 401:
             logger.error("认证失败：账号或密码错误")
             return False
         
-        response_data = await response.json()
+        response_data = response.json()
         
         # 需要两步验证
         if response_data.get("requiresTwoFactorAuth"):
@@ -180,7 +161,6 @@ async def handle_two_factor_auth(cookie: str) -> bool:
     """处理两步验证"""
     url = f"{VRC_API_BASE}/auth/twofactorauth/totp/verify"
     headers = {
-        "Cookie": cookie,
         "User-Agent": USER_AGENT
     }
 
@@ -195,23 +175,28 @@ async def handle_two_factor_auth(cookie: str) -> bool:
                 logger.warning("验证码不能为空")
                 continue
             
+            # 解析cookie字符串为字典格式
+            cookie_dict = {}
+            if cookie:
+                for item in cookie.split(';'):
+                    if '=' in item:
+                        key, value = item.strip().split('=', 1)
+                        cookie_dict[key] = value
+            
             data = {"code": code}
-            response = await _make_request("POST", url, headers, data)
+            response = await AsyncHttpx.post(url, headers=headers, cookies=cookie_dict, json=data)
             
-            if not response:
-                logger.error("请求失败")
-                continue
-            
-            if response.status == 200:
+            if response.status_code == 200:
                 logger.info("两步验证成功")
                 return True
-            elif response.status == 401:
+            elif response.status_code == 401:
                 logger.error("验证码错误")
             else:
-                logger.error(f"未知错误，状态码: {response.status}")
+                logger.error(f"未知错误，状态码: {response.status_code}")
                 
         except Exception as e:
             logger.error(f"两步验证时出错: {e}")
+
 
 async def ensure_valid_cookie() -> str:
     """确保获取到有效的cookie"""

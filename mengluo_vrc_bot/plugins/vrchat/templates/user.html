@@ -179,8 +179,12 @@
                                          style="margin-top: 10px; margin-bottom: 15px; min-height: 200px; max-height: 200px;">
                                         {% for group_info in groups_info %}
                                             <div class="x-friend-item x-friend-item-border">
-                                                <div class="avatar"><img
-                                                        src="https://api.vrchat.cloud/api/1/image/{{ group_info['iconId'] }}/1/128">
+                                                <div class="avatar">
+                                                    {% if group_info['iconId'] %}
+                                                    <img src="https://api.vrchat.cloud/api/1/image/{{ group_info['iconId'] }}/1/128">
+                                                    {% else %}
+                                                    <img src="{{ group_info['iconUrl'] }}">
+                                                    {% endif %}
                                                 </div>
                                                 <div class="detail"><span
                                                         class="name">{{ group_info['name'] }}</span><span class="extra"><span>({{ group_info['memberCount'] }})</span></span>

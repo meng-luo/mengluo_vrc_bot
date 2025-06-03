@@ -137,7 +137,7 @@ async def process_avatar_info(avatar_image_url: str, user_id: str) -> AvatarInfo
         if file_id and file_id != DEFAULT_AVATAR_FILE_ID:
             avatar_info.avatar_status = True
             file_info = await get_file_info(file_id)
-            avatar_info.avatar_name = file_info["name"].split("-")[-1].strip()
+            avatar_info.avatar_name = file_info["name"].split("-")[1].strip()
             avatar_info.avatar_is_owned = (file_info["ownerId"] == user_id)
     except Exception as e:
         logger.error(f"处理头像信息失败: {str(e)}")
@@ -153,7 +153,11 @@ def process_user_groups(groups_info: List[Dict], user_id: str) -> Tuple[int, boo
 
     group_data = GroupData()
     if representing_group:
-        group_data.group_image = f"https://api.vrchat.cloud/api/1/image/{representing_group['iconId']}/1/128"
+        iconId = representing_group['iconId']
+        if iconId:
+            group_data.group_image = f"https://api.vrchat.cloud/api/1/image/{iconId}/1/128"
+        else:
+            group_data.group_image = representing_group['iconUrl']
         group_data.group_is_owned = True if representing_group['ownerId'] == user_id else False
         group_data.group_discriminator = representing_group.get('discriminator', "")
         group_data.group_name = representing_group.get('name', "")

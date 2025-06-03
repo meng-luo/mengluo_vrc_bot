@@ -1,9 +1,20 @@
 import re
 from nonebot_plugin_alconna import Alconna, Args, on_alconna
 from nonebot_plugin_uninfo import Uninfo
+from nonebot.plugin import PluginMetadata
 
 # 显式导入需要的数据库函数，避免*导入带来的命名冲突
 from mengluo_vrc_bot.services.db import execute, fetchone
+
+__plugin_meta__ = PluginMetadata(
+    name="用户绑定",
+    description="绑定VRC用户ID",
+    usage="""
+    绑定用户：绑定VRC用户ID，格式为usr_前缀+UUID
+    我的绑定：查看当前绑定的VRC用户ID
+    解绑用户：解绑当前绑定的VRC用户ID
+    """,
+)
 
 # 提取正则表达式为常量，提高可读性
 VRC_ID_PATTERN = r'^usr_[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'

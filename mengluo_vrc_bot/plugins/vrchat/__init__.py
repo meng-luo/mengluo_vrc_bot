@@ -1,8 +1,21 @@
 from nonebot_plugin_alconna import Alconna, Args, on_alconna, At, UniMessage, Match
 from nonebot_plugin_uninfo import Uninfo
+from nonebot.plugin import PluginMetadata
 from mengluo_vrc_bot.services.db import fetchone
 
 from .rendering import *
+
+__plugin_meta__ = PluginMetadata(
+    name="信息获取",
+    description="获取Vrchat信息",
+    usage="""
+    查看模型：查看模型信息，格式为avtr_前缀+UUID
+    查看世界：查看世界信息，格式为wrld_前缀+UUID
+    查看用户：查看用户信息，格式为usr_前缀+UUID，支持@用户
+    我的信息：查看当前绑定的VRC用户信息
+    查看群组：查看群组信息，格式为grp_前缀+UUID
+    """,
+)
 
 get_avatar = on_alconna(Alconna("查看模型", Args["id", str]))
 get_world = on_alconna(Alconna("查看世界", Args["id", str]))

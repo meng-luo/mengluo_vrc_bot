@@ -64,7 +64,7 @@ class AvatarInfo:
 class GroupData:
     """用户组数据类"""
     group_image: str = ""
-    group_discriminator: str = ""
+    group_memberCount: str = ""
     group_name: str = ""
     group_is_owned: bool = False
 
@@ -159,7 +159,7 @@ def process_user_groups(groups_info: List[Dict], user_id: str) -> Tuple[int, boo
         else:
             group_data.group_image = representing_group['iconUrl']
         group_data.group_is_owned = True if representing_group['ownerId'] == user_id else False
-        group_data.group_discriminator = representing_group.get('discriminator', "")
+        group_data.group_memberCount = representing_group.get('memberCount', "")
         group_data.group_name = representing_group.get('name', "")
 
     return groups_count, group_status, group_data
@@ -274,7 +274,7 @@ async def render_userinfo(user_id: str) -> Union[bytes, str]:
             "groups_count": groups_count,
             "group_status": group_status,
             "group_image": group_data.group_image,
-            "group_discriminator": group_data.group_discriminator,
+            "group_memberCount": group_data.group_memberCount,
             "group_name": group_data.group_name,
             "group_is_owned": group_data.group_is_owned,
             "badges": user_info['badges'],

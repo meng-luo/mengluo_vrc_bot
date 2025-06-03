@@ -1,4 +1,4 @@
-from mengluo_vrc_bot.utils.http_utils import AsyncHttpx
+from .http_utils import AsyncHttpx
 from mengluo_vrc_bot.services.account_refresh import get_cookie, update_cookie
 from mengluo_vrc_bot.services.log import logger
 

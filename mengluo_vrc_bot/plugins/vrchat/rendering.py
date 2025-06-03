@@ -11,7 +11,7 @@ from urllib.parse import urlparse
 
 from mengluo_vrc_bot.services.log import logger
 
-from .data_source import *
+from mengluo_vrc_bot.utils.vrchat_utils import *
 
 require("nonebot_plugin_htmlrender")
 from nonebot_plugin_htmlrender import template_to_pic

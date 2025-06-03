@@ -1,9 +1,9 @@
 import sqlite3
 
-from pathlib import Path
+from mengluo_vrc_bot.config.path import DATA_PATH
 from .log import logger
 
-DATABASE_PATH = Path(__file__).parent.parent.parent / "data/database.db"
+DATABASE_PATH = DATA_PATH / "database.db"
 
 def init_db():
     """初始化数据库表（使用上下文管理器自动关闭连接）"""

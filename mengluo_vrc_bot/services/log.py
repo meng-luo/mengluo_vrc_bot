@@ -12,9 +12,10 @@ from nonebot.log import default_filter, default_format
 from nonebot_plugin_session import Session
 from nonebot_plugin_uninfo import Session as uninfoSession
 
+from mengluo_vrc_bot.config.path import LOG_PATH
+
 driver = nonebot.get_driver()
 config = nonebot.get_driver().config
-LOG_PATH = Path() / config.log_path
 log_level = driver.config.log_level or "INFO"
 
 logger_.add(

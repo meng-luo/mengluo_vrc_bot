@@ -166,7 +166,7 @@ def process_user_groups(groups_info: List[Dict], user_id: str) -> Tuple[int, boo
 
 
 def calculate_layout_height(text: str, line_threshold: int = 5,
-                            short_height: int = 950, long_height: int = 1150) -> Tuple[int, str]:
+                            short_height: int = 900, long_height: int = 1100) -> Tuple[int, str]:
     """根据文本内容计算布局高度"""
     if text.count('\n') > line_threshold:
         return long_height, "550px"
@@ -362,7 +362,7 @@ async def render_worldinfo(world_id: str) -> Union[bytes, str]:
             template_name="world.html",
             templates=template_data,
             pages={
-                "viewport": {"width": 850, "height": 525},
+                "viewport": {"width": 850, "height": 510},
                 "base_url": f"file://{TEMPLATE_PATH}"
             }
         )
@@ -389,7 +389,7 @@ async def render_avatarinfo(avatar_id: str) -> Union[bytes, str]:
 
         # 根据描述长度调整高度
         description = avatar_info['description']
-        height = 570 if len(description) >= 100 else 375
+        height = 420 if len(description) >= 100 else 340
 
         template_data = {
             "id": avatar_id,
@@ -450,7 +450,7 @@ async def render_groupinfo(group_id: str) -> Union[bytes, str]:
         content_is_long = (len(description) > 100 or
                            len(rules) > 100 or
                            rules.count('\n') > 5)
-        height = 850 if content_is_long else 630
+        height = 750 if content_is_long else 570
 
         # 生成群组代码
         group_code = f"{group_info['shortCode']}.{group_info['discriminator']}"

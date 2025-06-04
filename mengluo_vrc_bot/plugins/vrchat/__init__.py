@@ -17,14 +17,14 @@ __plugin_meta__ = PluginMetadata(
     """,
 )
 
-get_avatar = on_alconna(Alconna("查看模型", Args["id", str]))
-get_world = on_alconna(Alconna("查看世界", Args["id", str]))
-get_user = on_alconna(Alconna("查看用户", Args["id?", str, None]["at_user?", At]))
-my_info= on_alconna(Alconna("我的信息"))
-get_group = on_alconna(Alconna("查看群组", Args["id", str]))
-search_group = on_alconna(Alconna("搜索群组", Args["name", str]))
-search_user = on_alconna(Alconna("搜索用户", Args["name", str]))
-search_world = on_alconna(Alconna("搜索世界", Args["name", str]))
+get_avatar = on_alconna(Alconna("查看模型", Args["id", str]), priority=5, block=True)
+get_world = on_alconna(Alconna("查看世界", Args["id", str]), priority=5, block=True)
+get_user = on_alconna(Alconna("查看用户", Args["id?", str, None]["at_user?", At]), priority=5, block=True)
+my_info= on_alconna(Alconna("我的信息"), priority=5, block=True)
+get_group = on_alconna(Alconna("查看群组", Args["id", str]), priority=5, block=True)
+search_group = on_alconna(Alconna("搜索群组", Args["name", str]), priority=5, block=True)
+search_user = on_alconna(Alconna("搜索用户", Args["name", str]), priority=5, block=True)
+search_world = on_alconna(Alconna("搜索世界", Args["name", str]), priority=5, block=True)
 
 
 @get_avatar.handle()

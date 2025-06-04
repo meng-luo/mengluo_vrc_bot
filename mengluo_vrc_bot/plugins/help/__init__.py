@@ -5,7 +5,7 @@ from nonebot.plugin import PluginMetadata
 from .data_source import render_help
 
 
-help = on_alconna(Alconna("帮助"), aliases={"help", "功能", "菜单"}, rule=to_me())
+help = on_alconna(Alconna("帮助"), aliases={"help", "功能", "菜单"}, rule=to_me(), priority=5, block=True)
 
 __plugin_meta__ = PluginMetadata(
     name="帮助",

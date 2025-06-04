@@ -21,9 +21,9 @@ __plugin_meta__ = PluginMetadata(
 # 提取正则表达式为常量，提高可读性
 VRC_ID_PATTERN = r'^usr_[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
 
-bind_user = on_alconna(Alconna("绑定用户", Args["vrc_id", str]))
-check_user = on_alconna(Alconna("我的绑定"))
-unbind_user = on_alconna(Alconna("解绑用户"))
+bind_user = on_alconna(Alconna("绑定用户", Args["vrc_id", str]), priority=5, block=True)
+check_user = on_alconna(Alconna("我的绑定"), priority=5, block=True)
+unbind_user = on_alconna(Alconna("解绑用户"), priority=5, block=True)
 
 @bind_user.handle()
 async def _(session: Uninfo, vrc_id: str):

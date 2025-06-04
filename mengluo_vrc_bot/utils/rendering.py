@@ -10,8 +10,9 @@ from typing import Dict, List, Optional, Union, Tuple
 from urllib.parse import urlparse
 
 from mengluo_vrc_bot.services.log import logger
+from mengluo_vrc_bot.config.path import TEMPLATE_PATH
 
-from mengluo_vrc_bot.utils.vrchat_utils import *
+from .vrchat_utils import *
 
 require("nonebot_plugin_htmlrender")
 from nonebot_plugin_htmlrender import template_to_pic
@@ -20,7 +21,6 @@ from nonebot_plugin_htmlrender import template_to_pic
 FILE_ID_PATTERN = re.compile(r"file_[a-zA-Z0-9-]+")
 AUTHOR_TAG_PATTERN = re.compile(r'author_tag_')
 DEFAULT_AVATAR_FILE_ID = "file_0e8c4e32-7444-44ea-ade4-313c010d4bae"
-TEMPLATE_PATH = str(Path(__file__).parent / "templates")
 BEIJING_TZ = pytz.timezone('Asia/Shanghai')
 
 
@@ -282,7 +282,7 @@ async def render_userinfo(user_id: str) -> Union[bytes, str]:
         }
 
         return await template_to_pic(
-            template_path=TEMPLATE_PATH,
+            template_path=str((TEMPLATE_PATH / "vrchat").absolute()),
             template_name="user.html",
             templates=template_data,
             pages={
@@ -358,7 +358,7 @@ async def render_worldinfo(world_id: str) -> Union[bytes, str]:
         }
 
         return await template_to_pic(
-            template_path=TEMPLATE_PATH,
+            template_path=str((TEMPLATE_PATH / "vrchat").absolute()),
             template_name="world.html",
             templates=template_data,
             pages={
@@ -408,7 +408,7 @@ async def render_avatarinfo(avatar_id: str) -> Union[bytes, str]:
         }
 
         return await template_to_pic(
-            template_path=TEMPLATE_PATH,
+            template_path=str((TEMPLATE_PATH / "vrchat").absolute()),
             template_name="avatar.html",
             templates=template_data,
             pages={
@@ -472,7 +472,7 @@ async def render_groupinfo(group_id: str) -> Union[bytes, str]:
         }
 
         return await template_to_pic(
-            template_path=TEMPLATE_PATH,
+            template_path=str((TEMPLATE_PATH / "vrchat").absolute()),
             template_name="group.html",
             templates=template_data,
             pages={

@@ -5,14 +5,13 @@ from nonebot import require
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
-from pathlib import Path
 from typing import Dict, List, Optional, Union, Tuple
 from urllib.parse import urlparse
 
 from mengluo_vrc_bot.services.log import logger
 from mengluo_vrc_bot.config.path import TEMPLATE_PATH
 
-from .vrchat_utils import *
+from .vrchat_utils import VRChatAPI
 
 require("nonebot_plugin_htmlrender")
 from nonebot_plugin_htmlrender import template_to_pic
@@ -23,6 +22,7 @@ AUTHOR_TAG_PATTERN = re.compile(r'author_tag_')
 DEFAULT_AVATAR_FILE_ID = "file_0e8c4e32-7444-44ea-ade4-313c010d4bae"
 BEIJING_TZ = pytz.timezone('Asia/Shanghai')
 
+vrchat = VRChatAPI()
 
 # 平台映射
 class Platform(Enum):
@@ -136,7 +136,7 @@ async def process_avatar_info(avatar_image_url: str, user_id: str) -> AvatarInfo
         file_id = extract_file_id(avatar_image_url)
         if file_id and file_id != DEFAULT_AVATAR_FILE_ID:
             avatar_info.avatar_status = True
-            file_info = await get_file_info(file_id)
+            file_info = await vrchat.get_file_info(file_id)
             avatar_info.avatar_name = file_info["name"].split("-")[1].strip()
             avatar_info.avatar_is_owned = (file_info["ownerId"] == user_id)
     except Exception as e:
@@ -184,7 +184,7 @@ async def process_unity_packages_for_world(unity_packages: List[Dict]) -> Tuple[
             continue
 
         try:
-            file_info = await get_file_info(file_id)
+            file_info = await vrchat.get_file_info(file_id)
             file_size_mb = round(file_info['versions'][1]['file']['sizeInBytes'] / (1024 * 1024), 2)
             platform = package['platform']
             unity_version = package['unityVersion']
@@ -235,12 +235,12 @@ def process_unity_packages_for_avatar(unity_packages: List[Dict]) -> Tuple[Platf
 async def render_userinfo(user_id: str) -> Union[bytes, str]:
     """渲染用户信息"""
     try:
-        user_info = await get_user(user_id)
-        if not user_info:
-            return "用户不存在"
+        user_info = await vrchat.get_user(user_id)
+        if type(user_info) == str:
+            return user_info
 
         # 处理用户组信息
-        groups_info = await get_user_groups(user_id)
+        groups_info = await vrchat.get_user_groups(user_id)
         groups_count, group_status, group_data = process_user_groups(groups_info, user_id)
 
         # 处理信任等级
@@ -298,9 +298,9 @@ async def render_userinfo(user_id: str) -> Union[bytes, str]:
 async def render_worldinfo(world_id: str) -> Union[bytes, str]:
     """渲染世界信息"""
     try:
-        world_info = await get_world(world_id)
-        if not world_info:
-            return "世界不存在"
+        world_info = await vrchat.get_world(world_id)
+        if type(world_info) == str:
+            return world_info
 
         # 处理日期
         created_at = format_date_sync(world_info['created_at'])
@@ -374,9 +374,9 @@ async def render_worldinfo(world_id: str) -> Union[bytes, str]:
 async def render_avatarinfo(avatar_id: str) -> Union[bytes, str]:
     """渲染模型信息"""
     try:
-        avatar_info = await get_avatar(avatar_id)
-        if not avatar_info:
-            return "模型不存在"
+        avatar_info = await vrchat.get_avatar(avatar_id)
+        if type(avatar_info) == str:
+            return avatar_info
 
         # 处理日期
         created_at = format_date_sync(avatar_info['created_at'])
@@ -424,15 +424,15 @@ async def render_avatarinfo(avatar_id: str) -> Union[bytes, str]:
 async def render_groupinfo(group_id: str) -> Union[bytes, str]:
     """渲染群组信息"""
     try:
-        group_info = await get_group(group_id)
-        if not group_info:
-            return "群组不存在"
+        group_info = await vrchat.get_group(group_id)
+        if type(group_info) == str:
+            return group_info
 
         # 处理日期
         created_at = format_date_sync(group_info['createdAt'])
 
         # 获取群主信息
-        owner_info = await get_user(group_info['ownerId'])
+        owner_info = await vrchat.get_user(group_info['ownerId'])
         owner_name = owner_info["displayName"] if owner_info else "Unknown"
 
         # 处理链接图标

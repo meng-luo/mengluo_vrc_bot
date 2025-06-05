@@ -82,7 +82,7 @@ async def update_cookie() -> str:
             json.dump(cookies_dict, f, indent=2, ensure_ascii=False)
         
         logger.info("Cookie已成功更新")
-        return cookies_dict.get("auth", "")
+        return cookies_dict
         
     except IOError as e:
         logger.error(f"保存cookie文件失败: {e}")
@@ -94,19 +94,16 @@ async def get_cookie() -> str:
     try:
         if not COOKIE_FILE.exists():
             logger.info("Cookie文件不存在，开始创建")
-            await update_cookie()
+            return await update_cookie()
         
         with open(COOKIE_FILE, "r", encoding='utf-8') as f:
             auth_data = json.load(f)
-        
-        if not isinstance(auth_data, dict) or 'auth' not in auth_data:
-            logger.warning("Cookie文件格式错误，重新获取")
-            await update_cookie()
-            with open(COOKIE_FILE, "r", encoding='utf-8') as f:
-                auth_data = json.load(f)
-        
-        return f"auth={auth_data['auth']}"
-        
+            if not isinstance(auth_data, dict) or 'auth' not in auth_data:
+                logger.warning("Cookie文件格式错误，重新获取")
+                return await update_cookie()
+            else:
+                return auth_data
+
     except (IOError, json.JSONDecodeError) as e:
         logger.error(f"读取cookie文件失败: {e}")
         # 文件损坏时重新获取

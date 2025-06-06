@@ -87,3 +87,7 @@ class VRChatAPI:
     async def get_file_info(self, file_id: str) -> Union[Dict, str]:
         """获取文件信息"""
         return await self._make_request(f"file/{file_id}")
+    
+    async def get_friends(self, friends_status: bool, number: int) -> Union[Dict, str]:
+        """获取好友列表"""
+        return await self._make_request(f"auth/user/friends?offset=0&n={number}&offline={friends_status}")

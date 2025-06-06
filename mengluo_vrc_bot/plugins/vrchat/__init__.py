@@ -12,7 +12,7 @@ __plugin_meta__ = PluginMetadata(
     查看模型：查看模型信息，格式为avtr_前缀+UUID
     查看世界：查看世界信息，格式为wrld_前缀+UUID
     查看用户：查看用户信息，格式为usr_前缀+UUID，支持@用户
-    我的信息：查看当前绑定的VRC用户信息
+    我的vrc：查看当前绑定的VRC用户信息
     查看群组：查看群组信息，格式为grp_前缀+UUID
     """,
 )
@@ -20,7 +20,7 @@ __plugin_meta__ = PluginMetadata(
 get_avatar = on_alconna(Alconna("查看模型", Args["id", str]), priority=5, block=True)
 get_world = on_alconna(Alconna("查看世界", Args["id", str]), priority=5, block=True)
 get_user = on_alconna(Alconna("查看用户", Args["id?", str, None]["at_user?", At]), priority=5, block=True)
-my_info= on_alconna(Alconna("我的信息"), priority=5, block=True)
+my_info= on_alconna(Alconna("我的vrc"), aliases={"我的VRC"}, priority=5, block=True)
 get_group = on_alconna(Alconna("查看群组", Args["id", str]), priority=5, block=True)
 search_group = on_alconna(Alconna("搜索群组", Args["name", str]), priority=5, block=True)
 search_user = on_alconna(Alconna("搜索用户", Args["name", str]), priority=5, block=True)

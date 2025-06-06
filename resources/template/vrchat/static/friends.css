@@ -1,0 +1,9 @@
+.main {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+}
+
+.x-friend-item {
+    width: 380px;
+}

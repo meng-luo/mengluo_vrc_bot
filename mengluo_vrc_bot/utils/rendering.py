@@ -19,6 +19,7 @@ from nonebot_plugin_htmlrender import template_to_pic
 # 常量定义
 FILE_ID_PATTERN = re.compile(r"file_[a-zA-Z0-9-]+")
 AUTHOR_TAG_PATTERN = re.compile(r'author_tag_')
+LOCATION_PATTERN = r'wrld_([0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}):(\d+)(?:.*?~(group|hidden|friends)\()?'
 DEFAULT_AVATAR_FILE_ID = "file_0e8c4e32-7444-44ea-ade4-313c010d4bae"
 BEIJING_TZ = pytz.timezone('Asia/Shanghai')
 
@@ -39,10 +40,10 @@ PLATFORM_DISPLAY_MAP = {
 
 # 信任等级配置
 TRUST_LEVELS = [
-    ("system_trust_veteran", "x-tag-veteran", "Trusted User"),
-    ("system_trust_trusted", "x-tag-trusted", "Known User"),
-    ("system_trust_known", "x-tag-known", "User"),
-    ("system_trust_basic", "x-tag-basic", "New User")
+    ("system_trust_veteran", "x-tag-veteran", "Trusted User", "rgb(177, 143, 255)"),
+    ("system_trust_trusted", "x-tag-trusted", "Known User", "rgb(255, 123, 66)"),
+    ("system_trust_known", "x-tag-known", "User", "rgb(43, 207, 92)"),
+    ("system_trust_basic", "x-tag-basic", "New User", "rgb(23, 120, 255)")
 ]
 
 # 内容标签映射
@@ -51,6 +52,12 @@ CONTENT_TAG_MAP = {
     "content_adult": "成人内容"
 }
 
+STATUS_MAP = {
+    'active': 'online',
+    'join me': 'joinme',
+    'ask me': 'askme',
+    'busy': 'busy'
+}
 
 @dataclass
 class AvatarInfo:
@@ -106,12 +113,12 @@ def calculate_ratio(numerator: int, denominator: int, precision: int = 2) -> flo
     return round((numerator / denominator) * 100, precision) if denominator > 0 else 0
 
 
-def get_trust_level(tags: List[str]) -> Tuple[str, str]:
+def get_trust_level(tags: List[str]) -> Tuple[str, str, str]:
     """获取用户信任等级"""
-    for tag, css_class, description in TRUST_LEVELS:
+    for tag, css_class, description, color in TRUST_LEVELS:
         if tag in tags:
-            return css_class, description
-    return "x-tag-untrusted", "Visitor"
+            return css_class, description, color
+    return "x-tag-untrusted", "Visitor", "rgb(204, 204, 204)"
 
 
 def process_content_tags(tags: List[str]) -> List[str]:
@@ -244,7 +251,7 @@ async def render_userinfo(user_id: str) -> Union[bytes, str]:
         groups_count, group_status, group_data = process_user_groups(groups_info, user_id)
 
         # 处理信任等级
-        known, know_description = get_trust_level(user_info['tags'])
+        known, know_description, _ = get_trust_level(user_info['tags'])
 
         # 处理头像信息
         avatar_info = await process_avatar_info(user_info['currentAvatarImageUrl'], user_id)
@@ -483,3 +490,68 @@ async def render_groupinfo(group_id: str) -> Union[bytes, str]:
     except Exception as e:
         logger.error(f"渲染群组信息失败: {str(e)}")
         return "渲染群组信息失败"
+
+async def render_friendsinfo(friends_status: bool, friends_number: int) -> Union[bytes, str]:
+    """渲染好友信息"""
+    try:
+        friends_info = await vrchat.get_friends(friends_status, friends_number)
+        if type(friends_info) == str:
+            return friends_info
+        new_friends_info = []
+        web_friends_info = []
+        private_friends_info = []
+        for friend in friends_info:
+            displayName = friend["displayName"]
+            user_icon = friend["userIcon"] or friend["currentAvatarThumbnailImageUrl"]
+            _, _, color = get_trust_level(friend['tags'])
+            status = STATUS_MAP.get(friend["status"], friend["status"])
+            location = friend["location"]
+            if location == "offline":
+                web_friends_info.append({
+                    "displayName": displayName,
+                    "user_icon": user_icon,
+                    "location": "网页端在线",
+                    "color": color,
+                    "status": status
+                })
+            elif location == "private":
+                private_friends_info.append({
+                    "displayName": displayName,
+                    "user_icon": user_icon,
+                    "location": "私人世界中",
+                    "color": color,
+                    "status": status
+                })
+            else:
+                match = re.search(LOCATION_PATTERN, location)
+                uuid = "wrld_" + match.group(1)
+                room_id = match.group(2)
+                access_type = match.group(3) if match.group(3) else "public"
+                if access_type == "hidden":
+                    access_type = "friend+"
+                location = (await vrchat.get_world(uuid))["name"] + " #" + str(room_id) + " " +access_type
+                new_friends_info.append({
+                    "displayName": displayName,
+                    "user_icon": user_icon,
+                    "location": location,
+                    "color": color,
+                    "status": status
+                })
+        new_friends_info.extend(private_friends_info)
+        new_friends_info.extend(web_friends_info)
+        height = 90 + (len(new_friends_info) + 1) // 2 * 50
+        template_data = {
+            "friends_info": new_friends_info
+        }
+        return await template_to_pic(
+            template_path=str((TEMPLATE_PATH / "vrchat").absolute()),
+            template_name="friends.html",
+            templates=template_data,
+            pages={
+                "viewport": {"width": 850, "height": height},
+                "base_url": f"file://{TEMPLATE_PATH}"
+            }
+        )
+    except Exception as e:
+        logger.error(f"渲染好友信息失败: {str(e)}")
+        return "渲染好友信息失败"

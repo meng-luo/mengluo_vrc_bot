@@ -1,0 +1,23 @@
+<head>
+    <link rel="stylesheet" href="app.css"/>
+    <link rel="stylesheet" href="static/friends.css"/>
+</head>
+<div class="el-dialog" style="margin-top: 4vh; width: 800px;">
+<div class="el-dialog__body">
+    <span style="font-weight: bold; font-size: 16px;">在线好友</span>
+<div data-v-7133032b="" class="main">
+    {% for friend_info in friends_info %}
+    <div data-v-d87a374a="" data-v-7133032b="" class="x-friend-item">
+        <div data-v-d87a374a="" class="avatar {{friend_info['status']}}"><img data-v-d87a374a=""
+                src="{{ friend_info['user_icon']}}"></div>
+        <div data-v-d87a374a="" class="detail"><span data-v-d87a374a="" class="name"
+                style="color: {{ friend_info['color'] }};">{{friend_info['displayName']}}</span>
+            <div data-v-d87a374a="" class="extra"> <span><span class=""> <span>{{ friend_info['location']}}</span></span>
+                      </span></div>
+        </div>
+    </div>
+    {% endfor %}
+
+</div>
+</div>
+</div>

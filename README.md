@@ -1,5 +1,7 @@
 ## 梦落_VRC BOT
 
+> 请注意：本项目仍在开发过程中，可能存在一些问题，欢迎提 issue 和 pr。
+
 本项目符合 [OneBot](https://github.com/howmanybots/onebot) 标准，可基于以下项目与机器人框架/平台进行交互
 
 |                           项目地址                            | 平台 |         核心作者         | 备注 |
@@ -36,7 +38,7 @@ cp .env.example .env.dev
 ### 3. 启动机器人
 
 ```bash
-python main.py
+python bot.py
 ```
 
 ## 🙏 感谢
@@ -44,3 +46,4 @@ python main.py
 [botuniverse / onebot](https://github.com/botuniverse/onebot) ：超棒的机器人协议  
 [nonebot / nonebot2](https://github.com/nonebot/nonebot2) ：跨平台 Python 异步机器人框架  
 [zhenxun-org / zhenxun_bot](https://github.com/zhenxun-org/zhenxun_bot) ：基于 nonebot2 的绪山真寻 Bot
+[vrcx-team / VRCX](https://github.com/vrcx-team/VRCX) ：一款用于 VRChat 的外部辅助小工具

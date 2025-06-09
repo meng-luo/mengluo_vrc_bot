@@ -510,7 +510,6 @@ async def render_friendsinfo(friends_status: bool, friends_number: int) -> Union
                 web_friends_info.append({
                     "displayName": displayName,
                     "user_icon": user_icon,
-                    "location": "网页端在线",
                     "color": color,
                     "status": status
                 })
@@ -518,7 +517,6 @@ async def render_friendsinfo(friends_status: bool, friends_number: int) -> Union
                 private_friends_info.append({
                     "displayName": displayName,
                     "user_icon": user_icon,
-                    "location": "私人世界中",
                     "color": color,
                     "status": status
                 })
@@ -537,11 +535,18 @@ async def render_friendsinfo(friends_status: bool, friends_number: int) -> Union
                     "color": color,
                     "status": status
                 })
-        new_friends_info.extend(private_friends_info)
-        new_friends_info.extend(web_friends_info)
-        height = 90 + (len(new_friends_info) + 1) // 2 * 50
+        friend_count = len(new_friends_info)
+        web_count = len(web_friends_info)
+        private_count = len(private_friends_info)
+        height = 90 + (friend_count + 1) // 2 * 50 + (
+            web_count + 1) // 2 * 50 + (private_count + 1) // 2 * 50
         template_data = {
-            "friends_info": new_friends_info
+            "friends_info": new_friends_info,
+            "private_friends_info": private_friends_info,
+            "web_friends_info": web_friends_info,
+            "friend_count": friend_count,
+            "web_count": web_count,
+            "private_count": private_count,
         }
         return await template_to_pic(
             template_path=str((TEMPLATE_PATH / "vrchat").absolute()),

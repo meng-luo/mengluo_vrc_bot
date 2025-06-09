@@ -4,7 +4,7 @@
 </head>
 <div class="el-dialog" style="margin-top: 4vh; width: 800px;">
 <div class="el-dialog__body">
-    <span style="font-weight: bold; font-size: 16px;">在线好友</span>
+    <span style="font-weight: bold; font-size: 16px;">在线好友 ({{ friend_count }})</span>
 <div data-v-7133032b="" class="main">
     {% for friend_info in friends_info %}
     <div data-v-d87a374a="" data-v-7133032b="" class="x-friend-item">
@@ -16,8 +16,38 @@
                       </span></div>
         </div>
     </div>
-    {% endfor %}
 
+    {% endfor %}
+</div>
+    <br>
+    <span style="font-weight: bold; font-size: 16px;">私人世界  ({{ private_count }})</span>
+<div data-v-7133032b="" class="main">
+    {% for friend_info in private_friends_info %}
+    <div data-v-d87a374a="" data-v-7133032b="" class="x-friend-item">
+        <div data-v-d87a374a="" class="avatar {{friend_info['status']}}"><img data-v-d87a374a=""
+                src="{{ friend_info['user_icon']}}"></div>
+        <div data-v-d87a374a="" class="detail"><span data-v-d87a374a="" class="name"
+                style="color: {{ friend_info['color'] }};">{{friend_info['displayName']}}</span>
+            <div data-v-d87a374a="" class="extra"> <span><span class=""> <span>私人世界中</span></span>
+                      </span></div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+    <br>
+    <span style="font-weight: bold; font-size: 16px;">网页端在线 ({{ web_count }})</span>
+<div data-v-7133032b="" class="main">
+    {% for friend_info in web_friends_info %}
+    <div data-v-d87a374a="" data-v-7133032b="" class="x-friend-item">
+        <div data-v-d87a374a="" class="avatar {{friend_info['status']}}"><img data-v-d87a374a=""
+                src="{{ friend_info['user_icon']}}"></div>
+        <div data-v-d87a374a="" class="detail"><span data-v-d87a374a="" class="name"
+                style="color: {{ friend_info['color'] }};">{{friend_info['displayName']}}</span>
+            <div data-v-d87a374a="" class="extra"> <span><span class=""> <span>网页端在线</span></span>
+                      </span></div>
+        </div>
+    </div>
+    {% endfor %}
 </div>
 </div>
 </div>

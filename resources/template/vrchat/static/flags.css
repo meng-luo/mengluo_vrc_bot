@@ -4,7 +4,7 @@
 }
 
 .flags {
-    background: url(assets/flags.png) no-repeat;
+    background: url(../assets/flags.png) no-repeat;
     background-size: calc(var(--offx) * 6);
     width: var(--offx);
     height: var(--offy);

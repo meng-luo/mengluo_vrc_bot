@@ -59,6 +59,37 @@ STATUS_MAP = {
     'busy': 'busy'
 }
 
+LANGUAGE_MAP = {
+    "language_eng": 'us',
+    "language_kor": 'kr',
+    "language_rus": 'ru',
+    "language_spa": 'es',
+    "language_por": 'pt',
+    "language_zho": 'cn',
+    "language_deu": 'de',
+    "language_jpn": 'jp',
+    "language_fra": 'fr',
+    "language_swe": 'se',
+    "language_nld": 'nl',
+    "language_pol": 'pl',
+    "language_dan": 'da',
+    "language_nor": 'no',
+    "language_ita": 'it',
+    "language_thai": 'th',
+    "language_fin": 'fi',
+    "language_hun": 'hu',
+    "language_ces": 'cz',
+    "language_tur": 'tr',
+    "language_ara": 'ar',
+    "language_ron": 'ro',
+    "language_vie": 'vn',
+    "language_ase": 'as',
+    "language_bfi": 'bf',
+    "language_dse": 'ds',
+    "language_fsl": 'fr',
+    "language_kvk": 'kr',
+}
+
 @dataclass
 class AvatarInfo:
     """头像信息数据类"""
@@ -119,6 +150,14 @@ def get_trust_level(tags: List[str]) -> Tuple[str, str, str]:
         if tag in tags:
             return css_class, description, color
     return "x-tag-untrusted", "Visitor", "rgb(204, 204, 204)"
+
+def get_languages(tags: List[str]) -> Tuple:
+    """获取用户语言"""
+    languages = []
+    for tag, language in LANGUAGE_MAP.items():
+        if tag in tags:
+            languages.append(language)
+    return languages
 
 
 def process_content_tags(tags: List[str]) -> List[str]:
@@ -253,6 +292,8 @@ async def render_userinfo(user_id: str) -> Union[bytes, str]:
         # 处理信任等级
         known, know_description, _ = get_trust_level(user_info['tags'])
 
+        languages = get_languages(user_info['tags'])
+
         # 处理头像信息
         avatar_info = await process_avatar_info(user_info['currentAvatarImageUrl'], user_id)
 
@@ -286,6 +327,7 @@ async def render_userinfo(user_id: str) -> Union[bytes, str]:
             "group_is_owned": group_data.group_is_owned,
             "badges": user_info['badges'],
             "min_height": min_height,
+            "languages": languages
         }
 
         return await template_to_pic(

@@ -45,5 +45,6 @@ python bot.py
 
 [botuniverse / onebot](https://github.com/botuniverse/onebot) ：超棒的机器人协议  
 [nonebot / nonebot2](https://github.com/nonebot/nonebot2) ：跨平台 Python 异步机器人框架  
-[zhenxun-org / zhenxun_bot](https://github.com/zhenxun-org/zhenxun_bot) ：基于 nonebot2 的绪山真寻 Bot
-[vrcx-team / VRCX](https://github.com/vrcx-team/VRCX) ：一款用于 VRChat 的外部辅助小工具
+[zhenxun-org / zhenxun_bot](https://github.com/zhenxun-org/zhenxun_bot) ：基于 nonebot2 的绪山真寻 Bot  
+[vrcx-team / VRCX](https://github.com/vrcx-team/VRCX) ：一款用于 VRChat 的外部辅助小工具  
+[vrchatapi](https://github.com/vrchatapi) ：Unofficial VRChat documentation and collection of libraries.

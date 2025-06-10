@@ -19,7 +19,7 @@ from nonebot_plugin_htmlrender import template_to_pic
 # 常量定义
 FILE_ID_PATTERN = re.compile(r"file_[a-zA-Z0-9-]+")
 AUTHOR_TAG_PATTERN = re.compile(r'author_tag_')
-LOCATION_PATTERN = r'wrld_([0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}):(\d+)(?:.*?~(group|hidden|friends)\()?'
+LOCATION_PATTERN = r'wrld_([0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}):(\d+)(?:.*?~(group|hidden|friends)\()?.*?~region\(([a-z]{2})\)'
 LANGUAGE_PATTERN = r'language_(\w+)'
 DEFAULT_AVATAR_FILE_ID = "file_0e8c4e32-7444-44ea-ade4-313c010d4bae"
 BEIJING_TZ = pytz.timezone('Asia/Shanghai')
@@ -578,6 +578,7 @@ async def render_friendsinfo(friends_status: bool, friends_number: int) -> Union
                 uuid = "wrld_" + match.group(1)
                 room_id = match.group(2)
                 access_type = match.group(3) if match.group(3) else "public"
+                region = match.group(4)
                 if access_type == "hidden":
                     access_type = "friend+"
                 location = (await vrchat.get_world(uuid))["name"] + " #" + str(room_id) + " " +access_type
@@ -586,7 +587,8 @@ async def render_friendsinfo(friends_status: bool, friends_number: int) -> Union
                     "user_icon": user_icon,
                     "location": location,
                     "color": color,
-                    "status": status
+                    "status": status,
+                    "region": region
                 })
         friend_count = len(new_friends_info)
         web_count = len(web_friends_info)

@@ -1,6 +1,7 @@
 <head>
     <link rel="stylesheet" href="app.css"/>
     <link rel="stylesheet" href="static/friends.css"/>
+    <link rel="stylesheet" href="static/flags.css"/>
 </head>
 <div class="el-dialog" style="margin-top: 4vh; width: 800px;">
 <div class="el-dialog__body">
@@ -13,6 +14,7 @@
         <div data-v-d87a374a="" class="detail"><span data-v-d87a374a="" class="name"
                 style="color: {{ friend_info['color'] }};">{{friend_info['displayName']}}</span>
             <div data-v-d87a374a="" class="extra"> <span><span class=""> <span>{{ friend_info['location']}}</span></span>
+                <span class="flags {{ friend_info['region'] }}" style="display: inline-block; margin-left: 5px;"></span>
                       </span></div>
         </div>
     </div>

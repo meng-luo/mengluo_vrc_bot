@@ -59,7 +59,7 @@ class VRChatAPI:
         except Exception as e:
             error_msg = f"请求 {endpoint} 失败: {str(e)}"
             logger.error(error_msg)
-            return f"错误：{error_msg}"
+            return f"错误：请求VRChat API失败。"
     async def get_avatar(self, avatar_id: str) -> Union[Dict, str]:
         """获取头像信息"""
         return await self._make_request(f"avatars/{avatar_id}")

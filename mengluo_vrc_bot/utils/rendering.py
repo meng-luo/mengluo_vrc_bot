@@ -20,6 +20,7 @@ from nonebot_plugin_htmlrender import template_to_pic
 FILE_ID_PATTERN = re.compile(r"file_[a-zA-Z0-9-]+")
 AUTHOR_TAG_PATTERN = re.compile(r'author_tag_')
 LOCATION_PATTERN = r'wrld_([0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}):(\d+)(?:.*?~(group|hidden|friends)\()?'
+LANGUAGE_PATTERN = r'language_(\w+)'
 DEFAULT_AVATAR_FILE_ID = "file_0e8c4e32-7444-44ea-ade4-313c010d4bae"
 BEIJING_TZ = pytz.timezone('Asia/Shanghai')
 
@@ -60,34 +61,34 @@ STATUS_MAP = {
 }
 
 LANGUAGE_MAP = {
-    "language_eng": 'us',
-    "language_kor": 'kr',
-    "language_rus": 'ru',
-    "language_spa": 'es',
-    "language_por": 'pt',
-    "language_zho": 'cn',
-    "language_deu": 'de',
-    "language_jpn": 'jp',
-    "language_fra": 'fr',
-    "language_swe": 'se',
-    "language_nld": 'nl',
-    "language_pol": 'pl',
-    "language_dan": 'da',
-    "language_nor": 'no',
-    "language_ita": 'it',
-    "language_thai": 'th',
-    "language_fin": 'fi',
-    "language_hun": 'hu',
-    "language_ces": 'cz',
-    "language_tur": 'tr',
-    "language_ara": 'ar',
-    "language_ron": 'ro',
-    "language_vie": 'vn',
-    "language_ase": 'as',
-    "language_bfi": 'bf',
-    "language_dse": 'ds',
-    "language_fsl": 'fr',
-    "language_kvk": 'kr',
+    "eng": 'us',
+    "kor": 'kr',
+    "rus": 'ru',
+    "spa": 'es',
+    "por": 'pt',
+    "zho": 'cn',
+    "deu": 'de',
+    "jpn": 'jp',
+    "fra": 'fr',
+    "swe": 'se',
+    "nld": 'nl',
+    "pol": 'pl',
+    "dan": 'da',
+    "nor": 'no',
+    "ita": 'it',
+    "thai": 'th',
+    "fin": 'fi',
+    "hun": 'hu',
+    "ces": 'cz',
+    "tur": 'tr',
+    "ara": 'ar',
+    "ron": 'ro',
+    "vie": 'vn',
+    "ase": 'as',
+    "bfi": 'bf',
+    "dse": 'ds',
+    "fsl": 'fr',
+    "kvk": 'kr',
 }
 
 @dataclass
@@ -154,9 +155,14 @@ def get_trust_level(tags: List[str]) -> Tuple[str, str, str]:
 def get_languages(tags: List[str]) -> Tuple:
     """获取用户语言"""
     languages = []
-    for tag, language in LANGUAGE_MAP.items():
-        if tag in tags:
-            languages.append(language)
+    for tag in tags:
+        match = re.search(LANGUAGE_PATTERN, tag)
+        if match:
+            language_code = match.group(1)
+            if language_code in LANGUAGE_MAP:
+                languages.append(LANGUAGE_MAP[language_code])
+            else:
+                languages.append(language_code)
     return languages
 
 
@@ -479,6 +485,10 @@ async def render_groupinfo(group_id: str) -> Union[bytes, str]:
 
         # 处理日期
         created_at = format_date_sync(group_info['createdAt'])
+        
+        group_languages = []
+        for language in group_info['languages']:
+            group_languages.append(LANGUAGE_MAP.get(language, language))
 
         # 获取群主信息
         owner_info = await vrchat.get_user(group_info['ownerId'])
@@ -517,7 +527,8 @@ async def render_groupinfo(group_id: str) -> Union[bytes, str]:
             "owner": owner_name,
             "rules": rules,
             "groupCode": group_code,
-            "links": link_icons
+            "links": link_icons,
+            "group_languages": group_languages,
         }
 
         return await template_to_pic(

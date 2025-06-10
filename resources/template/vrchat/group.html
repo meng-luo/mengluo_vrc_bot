@@ -1,5 +1,6 @@
 <head>
     <link rel="stylesheet" href="app.css"/>
+    <link rel="stylesheet" href="static/flags.css"/>
 </head>
 
 <body>
@@ -22,12 +23,13 @@
                                     class="group-discriminator x-grey"
                                     style="font-family: monospace; font-size: 12px; margin-right: 5px;">
                                     {{ groupCode }}
-                                </span> <span class="el-tooltip flags jp" aria-describedby="el-tooltip-3319"
-                                              tabindex="0"
-                                              style="display: inline-block; margin-right: 5px;"></span><span
-                                    class="el-tooltip flags us" aria-describedby="el-tooltip-7466" tabindex="0"
+                                </span>
+                                {% for group_language in group_languages %}
+                                <span class="el-tooltip flags {{group_language}}" aria-describedby="el-tooltip-3319" tabindex="0"
                                     style="display: inline-block; margin-right: 5px;"></span>
-                            <div style="margin-top: 5px;"><span class="x-grey"
+                                {% endfor %}
+                                <div style="margin-top: 5px;">
+                            <span class="x-grey"
                                                                 style="font-family: monospace;">{{ owner }}</span></div>
                             <div class="group-tags">
                                 <span class="el-tag el-tag--success el-tag--mini el-tag--plain"

@@ -2,6 +2,7 @@ from typing import Dict, Union
 from .http_utils import AsyncHttpx
 from mengluo_vrc_bot.services.account_refresh import get_cookie, update_cookie
 from mengluo_vrc_bot.services.log import logger
+import ujson
 
 
 class VRChatAPIError(Exception):
@@ -54,7 +55,7 @@ class VRChatAPI:
             # 重置cookie更新标志
             self._cookie_updated = False
             
-            return response.json()
+            return ujson.loads(response.content)
             
         except Exception as e:
             error_msg = f"请求 {endpoint} 失败: {str(e)}"

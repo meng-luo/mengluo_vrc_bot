@@ -1,4 +1,4 @@
-import json
+import ujson
 from typing import Dict, Optional
 
 import nonebot
@@ -77,9 +77,9 @@ async def update_cookie() -> str:
         raise VRCAuthError("无法获取有效的Cookie")
     
     try:
-        # 保存cookie到文件
+        # 保存cookie到文件u
         with open(COOKIE_FILE, "w", encoding='utf-8') as f:
-            json.dump(cookies_dict, f, indent=2, ensure_ascii=False)
+            ujson.dump(cookies_dict, f, indent=2, ensure_ascii=False)
         
         logger.info("Cookie已成功更新")
         return cookies_dict
@@ -97,19 +97,19 @@ async def get_cookie() -> str:
             return await update_cookie()
         
         with open(COOKIE_FILE, "r", encoding='utf-8') as f:
-            auth_data = json.load(f)
+            auth_data = ujson.load(f)
             if not isinstance(auth_data, dict) or 'auth' not in auth_data:
                 logger.warning("Cookie文件格式错误，重新获取")
                 return await update_cookie()
             else:
                 return auth_data
 
-    except (IOError, json.JSONDecodeError) as e:
+    except (IOError, ujson.JSONDecodeError) as e:
         logger.error(f"读取cookie文件失败: {e}")
         # 文件损坏时重新获取
         await update_cookie()
         with open(COOKIE_FILE, "r", encoding='utf-8') as f:
-            auth_data = json.load(f)
+            auth_data = ujson.load(f)
         return f"auth={auth_data['auth']}"
 
 
@@ -135,7 +135,7 @@ async def test_cookie(cookie: str) -> bool:
             logger.error("认证失败：账号或密码错误")
             return False
         
-        response_data = response.json()
+        response_data = ujson.loads(response.content)
         
         # 需要两步验证
         if response_data.get("requiresTwoFactorAuth"):

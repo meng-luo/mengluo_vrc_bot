@@ -1,9 +1,16 @@
+import re
+
 from nonebot_plugin_alconna import Alconna, Args, on_alconna, At, UniMessage, Match
 from nonebot_plugin_uninfo import Uninfo
 from nonebot.plugin import PluginMetadata
 from mengluo_vrc_bot.services.db import fetchone
 
 from mengluo_vrc_bot.utils.rendering import *
+
+AVATAR_ID_PATTERN = re.compile(r'^avtr_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
+WORLD_ID_PATTERN = re.compile(r'^wrld_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
+USER_ID_PATTERN = re.compile(r'^usr_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
+GROUP_ID_PATTERN = re.compile(r'^grp_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
 
 __plugin_meta__ = PluginMetadata(
     name="信息获取",
@@ -30,7 +37,7 @@ search_world = on_alconna(Alconna("搜索世界", Args["name", str]), priority=5
 @get_avatar.handle()
 async def _(id: str):
     # 验证模型ID格式（avtr_前缀+UUID）
-    if not re.match(r'^avtr_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$', id):
+    if not AVATAR_ID_PATTERN.match(id):
         await get_avatar.finish("错误：模型ID格式不正确")
     img = await render_avatarinfo(id)
     if type(img) == str:
@@ -41,7 +48,7 @@ async def _(id: str):
 @get_world.handle()
 async def _(id: str):
     # 验证世界ID格式（wrld_前缀+UUID）
-    if not re.match(r'^wrld_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$', id):
+    if not WORLD_ID_PATTERN.match(id):
         await get_world.finish("错误：世界ID格式不正确")
     img = await render_worldinfo(id)
     if type(img) == str:
@@ -58,7 +65,7 @@ async def _(id: str| None, session: Uninfo, at_user: Match[At]):
             await get_avatar.finish("错误：该用户未绑定vrc_id！")
         else:
             id = result[0]
-    elif not re.match(r'^usr_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$', id):
+    elif not USER_ID_PATTERN.match(id):
         await get_user.finish("错误：用户ID格式不正确")
     img = await render_userinfo(id)
     if type(img) == str:
@@ -81,7 +88,7 @@ async def _(session: Uninfo):
 @get_group.handle()
 async def _(id: str):
     # 验证群组ID格式（grp_前缀+UUID）
-    if not re.match(r'^grp_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$', id):
+    if not GROUP_ID_PATTERN.match(id):
         await get_group.finish("错误：群组ID格式不正确")
     img = await render_groupinfo(id)
     if type(img) == str:

@@ -57,19 +57,18 @@ class AsyncHttpx:
     @classmethod
     async def get(
         cls,
-        url: str | list[str],
+        url: str,
         *,
         check_status_code: int | None = None,
         **kwargs,
     ) -> Response:
-        """发送 GET 请求，并返回第一个成功的响应。
+        """发送 GET 请求。
 
         说明:
-            本方法是 httpx.get 的高级包装，增加了多链接尝试和自动重试功能。
-            如果提供 URL 列表，它将依次尝试直到成功为止。
+            本方法是 httpx.get 的高级包装，提供了统一的客户端管理。
 
         参数:
-            url: 单个请求 URL 或一个 URL 列表。
+            url: 请求的 URL。
             check_status_code: (可选) 若提供，将检查响应状态码是否匹配，否则抛出异常。
             **kwargs: 其他所有传递给 httpx.get 的参数
                     (如 `params`, `headers`, `timeout`等)。
@@ -79,37 +78,24 @@ class AsyncHttpx:
             
         异常:
             HTTPStatusError: 当响应状态码与期望不匹配时。
-            Exception: 当所有 URL 都获取失败时。
         """
-        urls = [url] if isinstance(url, str) else url
-        last_exception = None
-        
-        for current_url in urls:
-            try:
-                logger.info(f"开始获取 {current_url}..")
-                async with cls._create_client(**kwargs) as client:
-                    # 从 kwargs 中提取仅 client.get 支持的参数
-                    get_kwargs = {
-                        k: v
-                        for k, v in kwargs.items()
-                        if k not in ["verify", "headers"]
-                    }
-                    response = await client.get(current_url, **get_kwargs)
+        logger.info(f"开始获取 {url}..")
+        async with cls._create_client(**kwargs) as client:
+            # 从 kwargs 中提取仅 client.get 支持的参数
+            get_kwargs = {
+                k: v
+                for k, v in kwargs.items()
+                if k not in ["verify", "headers"]
+            }
+            response = await client.get(url, **get_kwargs)
 
-                if check_status_code and response.status_code != check_status_code:
-                    raise HTTPStatusError(
-                        f"状态码错误: {response.status_code}!={check_status_code}",
-                        request=response.request,
-                        response=response,
-                    )
-                return response
-                
-            except Exception as e:
-                last_exception = e
-                if current_url != urls[-1]:
-                    logger.warning(f"获取 {current_url} 失败, 尝试下一个", e=e)
-
-        raise last_exception or Exception("所有URL都获取失败")
+        if check_status_code and response.status_code != check_status_code:
+            raise HTTPStatusError(
+                f"状态码错误: {response.status_code}!={check_status_code}",
+                request=response.request,
+                response=response,
+            )
+        return response
 
     @classmethod
     async def head(cls, url: str, **kwargs) -> Response:

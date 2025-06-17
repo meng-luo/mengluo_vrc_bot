@@ -6,7 +6,7 @@ from httpx import AsyncHTTPTransport, HTTPStatusError, Response
 
 from mengluo_vrc_bot.services.log import logger
 
-
+CLIENT_KEY = ["use_proxy", "proxy", "verify", "headers"]
 USER_AGENT = {"User-Agent": "mengluo_vrc_bot/1.0"}
 
 def get_async_client(verify: bool = False, **kwargs) -> httpx.AsyncClient:
@@ -80,14 +80,11 @@ class AsyncHttpx:
             HTTPStatusError: 当响应状态码与期望不匹配时。
         """
         logger.info(f"开始获取 {url}..")
-        async with cls._create_client(**kwargs) as client:
-            # 从 kwargs 中提取仅 client.get 支持的参数
-            get_kwargs = {
-                k: v
-                for k, v in kwargs.items()
-                if k not in ["verify", "headers"]
-            }
-            response = await client.get(url, **get_kwargs)
+        client_kwargs = {k: v for k, v in kwargs.items() if k in CLIENT_KEY}
+        for key in CLIENT_KEY:
+            kwargs.pop(key, None)
+        async with cls._create_client(**client_kwargs) as client:
+            response = await client.get(url, **kwargs)
 
         if check_status_code and response.status_code != check_status_code:
             raise HTTPStatusError(
@@ -112,13 +109,11 @@ class AsyncHttpx:
         返回:
             Response: HTTP 响应对象。
         """
-        async with cls._create_client(**kwargs) as client:
-            head_kwargs = {
-                k: v
-                for k, v in kwargs.items()
-                if k not in ["verify"]
-            }
-            return await client.head(url, **head_kwargs)
+        client_kwargs = {k: v for k, v in kwargs.items() if k in CLIENT_KEY}
+        for key in CLIENT_KEY:
+            kwargs.pop(key, None)
+        async with cls._create_client(**client_kwargs) as client:
+            return await client.head(url, **kwargs)
 
     @classmethod
     async def post(cls, url: str, **kwargs) -> Response:
@@ -135,10 +130,8 @@ class AsyncHttpx:
         返回:
             Response: HTTP 响应对象。
         """
-        async with cls._create_client(**kwargs) as client:
-            post_kwargs = {
-                k: v
-                for k, v in kwargs.items()
-                if k not in ["verify"]
-            }
-            return await client.post(url, **post_kwargs)
+        client_kwargs = {k: v for k, v in kwargs.items() if k in CLIENT_KEY}
+        for key in CLIENT_KEY:
+            kwargs.pop(key, None)
+        async with cls._create_client(**client_kwargs) as client:
+            return await client.post(url, **kwargs)
